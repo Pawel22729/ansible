@@ -1,0 +1,6 @@
+---
+- name: STOP APPLICATION
+  command: echo "STOPPING APPLICATION {{STOP_COMMAND}}"
+  register: result
+
+- debug: msg={{result.stdout}}

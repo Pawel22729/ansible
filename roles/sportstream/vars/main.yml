@@ -1,0 +1,5 @@
+---
+# vars file for sportstream
+
+STOP_COMMAND: sportstream_stop_command.sh
+START_COMMAND: sportstream_start_command.sh

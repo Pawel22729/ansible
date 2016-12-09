@@ -1,0 +1,24 @@
+---
+- include_vars: placeholders/sportstream.yaml 
+
+- name: List files
+  command: find -type f
+  args:
+    chdir: roles/sportstream/templates/live
+  register: files
+
+- name: find folders
+  command: find -type d
+  args:
+    chdir: roles/sportstream/templates/live
+  register: folders
+
+- name: Create folders
+  file: path=/tmp/sportstream/{{item}} state=directory
+  with_items:
+    - "{{folders.stdout_lines}}"
+
+- name: Loooooop
+  template: src=roles/sportstream/templates/live/{{item | replace("\n", "")}} dest=/tmp/sportstream/{{item | replace("\n", "")}}
+  with_items:
+    - "{{files.stdout_lines}}"

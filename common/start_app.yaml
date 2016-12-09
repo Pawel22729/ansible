@@ -1,0 +1,6 @@
+---
+- name: START APPLICATION
+  command: echo "STARTING APPLICATION COMMON {{START_COMMAND}}"
+  register: result
+
+- debug: msg={{result.stdout}}

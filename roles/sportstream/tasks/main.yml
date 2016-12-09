@@ -1,0 +1,11 @@
+---
+# tasks file for sportstream
+
+- include: ../../common/stop_app.yaml
+
+- name: Zwykle Echo
+  command: echo 'TEST ZWYKLEGO ECHO SPORTSTREAM'
+
+- include: ../../common/replacer.yaml
+
+- include: ../../common/start_app.yaml
