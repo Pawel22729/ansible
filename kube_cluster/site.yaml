@@ -1,0 +1,12 @@
+---
+- name: master setup
+  hosts: masters
+  become: true
+  roles:
+    - master
+
+- name: setup slave
+  hosts: slaves
+  become: true
+  roles:
+    - slave
