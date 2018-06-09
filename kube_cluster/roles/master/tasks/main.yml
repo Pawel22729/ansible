@@ -1,4 +1,80 @@
 ---
 # tasks file for master
-- name: task from master-tasks
-  shell: echo "master task1"
+- name: yum update
+  yum:
+    name: '*'
+    state: latest
+
+- name: install docker
+  yum:
+    name: docker
+    state: latest
+
+- name: enable docker
+  service:
+    name: docker
+    enabled: yes
+    state: restarted
+
+- name: add kubernetes repo
+  yum_repository:
+    name: kubernetes
+    description: kubernetes repo
+    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+    gpgkey: https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg # https://packages.cloud.google.com/yum/doc/yum-key.gpg
+    gpgcheck: yes
+
+- name: disable selinux
+  command: setenforce 0
+  ignore_errors: yes
+  become: yes
+
+- name: install kubeadm
+  yum:
+    name: kubeadm
+    state: latest
+
+- name: install kubectl
+  yum:
+    name: kubectl
+    state: latest
+
+- name: install kubelet
+  yum:
+    name: kubelet
+    state: latest
+
+- name: enable kubelet
+  service:
+    name: kubelet
+    enabled: yes
+    state: restarted
+
+- name: iptables bridge-nf set to 1
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: 1
+    state: present
+
+- name: kubeadm init
+  command: /bin/kubeadm init
+  args:
+    chdir: /etc/kubernetes
+  become: yes
+  register: out
+
+- name: display kubeadm init information
+  debug: msg={{ out.stdout }}
+
+
+
+
+
+
+
+
+
+
+
+
+

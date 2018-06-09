@@ -5,8 +5,8 @@
   roles:
     - master
 
-- name: setup slave
-  hosts: slaves
-  become: true
-  roles:
-    - slave
+#- name: setup slave
+#  hosts: slaves
+#  become: true
+#  roles:
+#    - slave

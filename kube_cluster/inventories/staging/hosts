@@ -1,9 +1,9 @@
 [masters]
-ec2-35-180-92-102.eu-west-3.compute.amazonaws.com
+35.180.39.248 ansible_user=centos
 
 [slaves]
-ec2-35-180-11-132.eu-west-3.compute.amazonaws.com
-ec2-52-47-80-50.eu-west-3.compute.amazonaws.com
+35.180.98.238
+35.180.47.146
 
 [locals]
 localhost
