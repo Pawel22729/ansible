@@ -1,60 +1,23 @@
 ---
 # tasks file for master
-- name: yum update
-  yum:
-    name: '*'
-    state: latest
-
-- name: install docker
-  yum:
-    name: docker
-    state: latest
-
-- name: enable docker
-  service:
-    name: docker
-    enabled: yes
-    state: restarted
-
-- name: add kubernetes repo
-  yum_repository:
-    name: kubernetes
-    description: kubernetes repo
-    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
-    gpgkey: https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg # https://packages.cloud.google.com/yum/doc/yum-key.gpg
-    gpgcheck: yes
-
-- name: disable selinux
-  command: setenforce 0
-  ignore_errors: yes
-  become: yes
-
-- name: install kubeadm
-  yum:
-    name: kubeadm
-    state: latest
-
-- name: install kubectl
-  yum:
-    name: kubectl
-    state: latest
-
-- name: install kubelet
-  yum:
-    name: kubelet
-    state: latest
-
 - name: enable kubelet
   service:
     name: kubelet
     enabled: yes
     state: restarted
 
-- name: iptables bridge-nf set to 1
-  sysctl:
-    name: net.bridge.bridge-nf-call-iptables
-    value: 1
-    state: present
+- name: clean previous init
+  file:
+    state: absent
+    path: "{{ item }}"
+  with_items:
+    - /var/lib/etcd
+    - /etc/kubernetes
+
+- name: recreate folders
+  file:
+    state: directory
+    path: /etc/kubernetes
 
 - name: kubeadm init
   command: /bin/kubeadm init
@@ -62,19 +25,17 @@
     chdir: /etc/kubernetes
   become: yes
   register: out
+  ignore_errors: yes
 
-- name: display kubeadm init information
-  debug: msg={{ out.stdout }}
+- name: create out log file
+  file:
+    state: present
+    path: /tmp/kube_init.log
 
+- name: save init output
+  local_action: copy content={{ out.stdout_lines }} dest="/tmp/kube_init.log" 
 
-
-
-
-
-
-
-
-
-
-
-
+#- name: stop fw
+#  systemd:
+#    name: firewalld
+#    state: stopped

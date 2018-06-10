@@ -3,10 +3,12 @@
   hosts: masters
   become: true
   roles:
+    - common
     - master
 
-#- name: setup slave
-#  hosts: slaves
-#  become: true
-#  roles:
-#    - slave
+- name: setup slave
+  hosts: slaves
+  become: true
+  roles:
+    - common
+    - slave

@@ -1,9 +1,9 @@
 [masters]
-35.180.39.248 ansible_user=centos
+35.180.20.111 ansible_user=centos
 
 [slaves]
-35.180.98.238
-35.180.47.146
+52.47.134.184 ansible_user=centos
+35.180.116.21 ansible_user=centos
 
 [locals]
 localhost
