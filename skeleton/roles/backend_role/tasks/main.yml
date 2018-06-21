@@ -1,0 +1,9 @@
+---
+# tasks file for backend_role
+- name: Print variables from backend role
+  shell: "echo {{ var1 }}"
+  register: e
+
+- name: Print
+  debug:
+    var: e

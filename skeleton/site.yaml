@@ -1,0 +1,4 @@
+---
+# file: site.yml
+- import_playbook: frontend.yaml
+- import_playbook: backend.yaml
