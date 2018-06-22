@@ -1,4 +1,5 @@
 ---
 - hosts: frontend
+  gather_facts: False
   roles:
     - frontend_role

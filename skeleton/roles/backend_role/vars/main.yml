@@ -1,2 +1,3 @@
 ---
 # vars file for backend_role
+var2: backend_role_variable

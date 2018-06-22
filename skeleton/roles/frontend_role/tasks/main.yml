@@ -1,7 +1,7 @@
 ---
 # tasks file for frontend_role
 - name: Print variables from frontend role
-  shell: "echo {{ var1 }}"
+  shell: "echo {{ var1 }} {{ var2 }} {{ var3 }}"
   register: e
 
 - name: Print

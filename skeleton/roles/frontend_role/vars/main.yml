@@ -1,2 +1,3 @@
 ---
 # vars file for frontend_role
+var2: frontend_role_variable
