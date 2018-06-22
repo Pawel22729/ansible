@@ -5,17 +5,6 @@
     name: '*'
     state: latest
 
-- name: install docker
-  yum:
-    name: docker
-    state: latest
-
-- name: enable docker
-  service:
-    name: docker
-    enabled: yes
-    state: restarted
-
 - name: add kubernetes repo
   yum_repository:
     name: kubernetes
@@ -23,6 +12,37 @@
     baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
     gpgkey: https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg # https://packages.cloud.google.com/yum/doc/yum-key.gpg
     gpgcheck: yes
+
+- name: add docker ce stable
+  yum_repository:
+    name: docker-ce
+    description: docker cd repo
+    baseurl:
+      - https://download.docker.com/linux/centos/7/x86_64/stable
+      - https://download.docker.com/linux/centos/7/x86_64/edge
+      - https://download.docker.com/linux/centos/7/x86_64/test
+    gpgkey: https://download.docker.com/linux/centos/gpg
+    gpgcheck: yes
+#
+#- name: add older docker version repo
+#  yum_repository:
+#    name: dockerrepo
+#    description: dockerrepo
+#    baseurl: https://yum.dockerproject.org/repo/main/centos/7/
+#    gpgcheck: yes
+#    gpgkey: https://yum.dockerproject.org/gpg
+#
+- name: install docker
+  yum:
+    #name: docker-engine-17.05.0.ce-1.el7.centos
+    name: docker-ce
+    state: installed
+
+- name: enable docker
+  service:
+    name: docker
+    enabled: yes
+    state: started
 
 - name: disable selinux
   command: setenforce 0
@@ -50,3 +70,6 @@
     value: 1
     state: present
     reload: yes
+
+- name: swap off
+  shell: swapoff /dev/mapper/centos-swap

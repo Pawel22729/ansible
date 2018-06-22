@@ -1,14 +1,15 @@
 ---
 - name: master setup
   hosts: masters
+  gather_facts: false
   become: true
   roles:
     - common
-    - master
+#    - master
 
 - name: setup slave
   hosts: slaves
   become: true
   roles:
-    - common
+#    - common
     - slave
