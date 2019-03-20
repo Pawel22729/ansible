@@ -13,16 +13,16 @@
     gpgkey: https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg # https://packages.cloud.google.com/yum/doc/yum-key.gpg
     gpgcheck: yes
 
-- name: add docker ce stable
-  yum_repository:
-    name: docker-ce
-    description: docker cd repo
-    baseurl:
-      - https://download.docker.com/linux/centos/7/x86_64/stable
-      - https://download.docker.com/linux/centos/7/x86_64/edge
-      - https://download.docker.com/linux/centos/7/x86_64/test
-    gpgkey: https://download.docker.com/linux/centos/gpg
-    gpgcheck: yes
+#- name: add docker ce stable
+#  yum_repository:
+#    name: docker-ce
+#    description: docker cd repo
+#    baseurl:
+#      - https://download.docker.com/linux/centos/7/x86_64/stable
+#      - https://download.docker.com/linux/centos/7/x86_64/edge
+#      - https://download.docker.com/linux/centos/7/x86_64/test
+#    gpgkey: https://download.docker.com/linux/centos/gpg
+#    gpgcheck: yes
 #
 #- name: add older docker version repo
 #  yum_repository:
@@ -31,18 +31,26 @@
 #    baseurl: https://yum.dockerproject.org/repo/main/centos/7/
 #    gpgcheck: yes
 #    gpgkey: https://yum.dockerproject.org/gpg
-#
+
+- name: add repos
+  shell: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+- name: enable edge
+  shell: yum-config-manager --enable docker-ce-edge
+
+- name: enable test
+  shell: yum-config-manager --enable docker-ce-test
+
 - name: install docker
   yum:
-    #name: docker-engine-17.05.0.ce-1.el7.centos
-    name: docker-ce
+    name: docker
     state: installed
 
 - name: enable docker
   service:
     name: docker
     enabled: yes
-    state: started
+    state: running
 
 - name: disable selinux
   command: setenforce 0
@@ -73,3 +81,4 @@
 
 - name: swap off
   shell: swapoff /dev/mapper/centos-swap
+  ignore_errors: yes

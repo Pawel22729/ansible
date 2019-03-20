@@ -1,41 +1,22 @@
 ---
 # tasks file for master
+- name: put bridge service
+  template:
+    src: roles/master/templates/bridge.service.j2
+    dest: /etc/systemd/system/bridge.service
+    mode: 0755
+
+- name: run bridge service
+  service:
+    name: bridge
+    state: started
+
+- name: systemd daemon reload
+  shell: systemctl daemon-reload
+
+
 - name: enable kubelet
   service:
     name: kubelet
     enabled: yes
     state: restarted
-
-- name: clean previous init
-  file:
-    state: absent
-    path: "{{ item }}"
-  with_items:
-    - /var/lib/etcd
-    - /etc/kubernetes
-
-- name: recreate folders
-  file:
-    state: directory
-    path: /etc/kubernetes
-
-- name: kubeadm init
-  command: /bin/kubeadm init
-  args:
-    chdir: /etc/kubernetes
-  become: yes
-  register: out
-  ignore_errors: yes
-
-- name: create out log file
-  file:
-    state: present
-    path: /tmp/kube_init.log
-
-- name: save init output
-  local_action: copy content={{ out.stdout_lines }} dest="/tmp/kube_init.log" 
-
-#- name: stop fw
-#  systemd:
-#    name: firewalld
-#    state: stopped
