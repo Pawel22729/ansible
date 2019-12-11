@@ -1,0 +1,6 @@
+---
+- name: Apache | restart if notified
+  listen: restart apache
+  service:
+    name: httpd
+    state: restarted

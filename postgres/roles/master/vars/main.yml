@@ -1,0 +1,6 @@
+---
+# vars file for postgres
+
+db_name: testdb
+db_user: replication
+db_pass: testpass

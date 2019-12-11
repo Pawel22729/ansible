@@ -1,0 +1,3 @@
+---
+- name: disable-selinux
+  shell: setenforce 0    

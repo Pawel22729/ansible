@@ -1,0 +1,24 @@
+---
+- name: HAproxy | installation
+  package:
+    name: haproxy
+    state: latest
+
+- name: HAproxy | enable firewalld
+  firewalld:
+    port: 7000/tcp
+    permanent: yes
+    state: enabled    
+
+- name: HAproxy | enable HAprosy service
+  service:
+    name: haproxy
+    state: started
+    enabled: true
+    
+- name: HAproxy | configuration template
+  template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+    mode: 0644
+  notify: restart haproxy

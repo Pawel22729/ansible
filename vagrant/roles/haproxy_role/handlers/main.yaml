@@ -1,0 +1,6 @@
+---
+- name: HAproxy | restart
+  listen: restart haproxy
+  service:
+    name: haproxy
+    state: restarted

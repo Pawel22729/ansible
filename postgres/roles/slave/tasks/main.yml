@@ -1,0 +1,52 @@
+---
+# tasks file for postgres
+- name: install postgres
+  package:
+    name: postgresql
+    state: present
+
+- name: install postgres-contrib
+  package:
+    name: postgresql-contrib
+    state: present
+
+- name: Install psycopg2 package rtequired for creating db
+  apt:
+    name: python3-psycopg2
+    state: latest
+    update_cache: yes
+
+- name: Start postgres
+  service:
+    name: postgresql
+    state: started
+
+- name: Update listener address to all (*)
+  lineinfile:
+    path: "{{ postgres_conf }}"
+    line: listen_addresses = '*'
+    state: present
+
+- name: Switch hot standby ON
+  lineinfile:
+    path: "{{ postgres_conf }}"
+    line: wal_level = hot_standby
+    state: present
+
+- name: Update max wal senders to 3
+lineinfile:
+  path: "{{ postgres_conf }}"
+  line: max_wal_senders = 3
+  state: present
+
+- name: Update wal keep segments to 8
+  lineinfile:
+    path: "{{ postgres_conf }}"
+    line: wal_keep_segments = 8
+    state: present
+
+- name: Update wal keep segments to 8
+  lineinfile:
+    path: "{{ postgres_conf }}"
+    line: hot_standby = on
+    state: present

@@ -1,0 +1,4 @@
+---
+# vars file for postgres
+
+postgres_pg_conf: /etc/postgresql/10/main/pg_hba.conf

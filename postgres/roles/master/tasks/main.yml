@@ -1,0 +1,39 @@
+---
+# tasks file for postgres
+- name: install postgres
+  package:
+    name: postgresql
+    state: present
+
+- name: install postgres-contrib
+  package:
+    name: postgresql-contrib
+    state: present
+
+- name: Install psycopg2 package rtequired for creating db
+  apt:
+    name: python3-psycopg2
+    state: latest
+    update_cache: yes
+
+- name: Start postgres
+  service:
+    name: postgresql
+    state: started
+
+- name: Create a new database
+  postgresql_db:
+    name: "{{ db_name }}"
+  become: yes
+  become_method: su
+  become_user: postgres
+    
+- name: Connect to database, create user, and grant access to database and table
+  postgresql_user:
+    db: "{{ db_name }}"
+    name: "{{ db_user }}"
+    password: "{{ db_pass }}"
+    role_attr_flags: REPLICATION
+  become: yes
+  become_method: su
+  become_user: postgres

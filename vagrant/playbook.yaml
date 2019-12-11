@@ -1,0 +1,20 @@
+---
+- hosts:
+    - haproxy
+    - backend
+  user: vagrant
+  become: yes
+  roles:
+    - disable-selinux  
+
+- hosts: haproxy
+  user: vagrant
+  become: true
+  roles:
+    - haproxy_role
+
+- hosts: backend
+  user: vagrant
+  become: true
+  roles:
+    - backend_role

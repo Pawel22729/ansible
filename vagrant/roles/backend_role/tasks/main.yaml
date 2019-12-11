@@ -1,0 +1,17 @@
+- name: Apache | installation
+  package: 
+    name: httpd
+    state: latest
+    
+- name: Apache | update html to identify the host
+  template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+    mode: 0444
+  notify: restart apache      
+
+- name: Apache | enable
+  service:
+    name: httpd
+    state: started
+    enabled: true
