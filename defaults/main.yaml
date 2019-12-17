@@ -1,0 +1,4 @@
+---
+java_version: "java-1.8.0-openjdk"
+elasticsearch_version: "elasticsearch-6.6.2-1"
+java_memory: "1g"

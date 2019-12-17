@@ -1,0 +1,28 @@
+---
+    - name: ElasticSearch | Get SELinux staus
+      shell: getenforce
+      register: selinux_status
+      changed_when: selinux_status.stdout == 'Enforcing'
+
+    - name: ElasticSearch | Set SELinux in permissive mode
+      shell: setenforce 0
+      when: selinux_status.stdout == 'Enforcing'
+        
+    - name: ElasticSearch | ensure {{ java_version }} is installed
+      package:
+        name: "{{ java_version }}"
+        state: present
+        
+    - name: ElasticSearch | Add repository for 6.x packages
+      yum_repository:
+        name: elasticsearch
+        description: Elasticsearch repository for 6.x packages
+        baseurl: https://artifacts.elastic.co/packages/6.x/yum
+        gpgkey: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+        gpgcheck: yes
+    
+    - name: ElasticSearch | installation
+      package:
+        name: "{{ elasticsearch_version }}"
+        state: present
+      notify: restart elasticsearch

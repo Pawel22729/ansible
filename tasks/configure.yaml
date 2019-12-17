@@ -1,0 +1,16 @@
+---
+- name: ElasticSearch | configure by copy config file
+  template:
+    src: elasticsearch.yml.j2
+    dest: /etc/elasticsearch/elasticsearch.yml
+  notify: restart elasticsearch
+
+- name: ElasticSearch | set Xms/Xmx value to {{ java_memory }}
+  lineinfile:
+    path: /etc/elasticsearch/jvm.options
+    regexp: '^-{{ item }}'
+    line: "-{{ item }}{{ java_memory }}"
+  with_items:
+    - 'Xms'
+    - 'Xmx'  
+  notify: restart elasticsearch  
