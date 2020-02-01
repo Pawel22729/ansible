@@ -1,0 +1,11 @@
+---
+- hosts: localhost
+  connection: local
+  vars:
+      contents: "{{ lookup('vault', 'pass') }}"
+
+  tasks:
+
+      - debug:
+          msg: the value of foo.txt is {{ contents }}
+  

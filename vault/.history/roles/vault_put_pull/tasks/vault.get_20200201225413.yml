@@ -1,0 +1,3 @@
+- name: Get a secret using vault plugin
+  debug:
+    var: "{{ lookup('vault', 'pass') }}"

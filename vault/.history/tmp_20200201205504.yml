@@ -1,0 +1,10 @@
+---
+  - hosts: all
+    vars:
+       contents: "{{ lookup('namespace.collection_name.file', '/etc/foo.txt') }}"
+  
+    tasks:
+  
+       - debug:
+           msg: the value of foo.txt is {{ contents }} as seen today {{ lookup('pipe', 'date +"%Y-%m-%d"') }}
+  
