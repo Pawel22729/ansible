@@ -5,7 +5,7 @@ Run Docker vault first:
   1. docker run --cap-add=IPC_LOCK -e 'VAULT_DEV_ROOT_TOKEN_ID=myroot' -e 'VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200' -p 8200:8200 vault
   2. export VAULT_ADDR and VAULT_TOKEN || overwrite them below
 
-  Usaga:
+  Usage:
     python3 vault.py --put --path 'pablo' --key 'pass' --value 'secretpass'
     python3 vault.py --get --path 'pablo' --key 'pass'
     python3 vault.py --patch --path 'pablo' --key 'pass' --value 'xxx'
