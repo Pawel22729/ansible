@@ -1,4 +1,0 @@
----
-- include_tasks: vault_put.py
-  witch_items:
-    - "Pablo"  

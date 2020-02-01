@@ -1,7 +1,0 @@
----
-# - include_tasks: vault_put.yml
-#   witch_items:
-#     - "Pablo"
-    
-- include_tasks: vault_get.yml
-  with_items: "{{ vars_for_lookup }}" 

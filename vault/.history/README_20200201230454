@@ -1,6 +1,0 @@
-## README ###
-
-* execution example:
-  - OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES ansible-playbook playbook.yml
-
-OBJC_DISABLE_INITIALIZE_FORK_SAFETY - required because of https://github.com/ansible/ansible/issues/32499
