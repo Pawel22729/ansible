@@ -1,37 +1,49 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+project = '/example_project'
+subnet = "192.168.33.1"
+host_groups = [
+  {
+    prefix: "worker",
+    mem: 1024,
+    cpu: 1,
+    nodes: 4,
+    os: 'centos/7' #'bento/ubuntu-18.04'
+  },
+  {
+    prefix: "lb",
+    mem: 1024,
+    cpu: 1,
+    nodes: 1,
+    os: 'centos/7'
+  }
+]
+
+# config.vm.provider "virtualbox" do |v|
+#   v.customize ["modifyvm", :id, "--groups", "/mygroupname"]
+# end
+
 Vagrant.configure("2") do |config|
 
-  config.vm.box = "centos/7"
-  subnet = "192.168.33.1"
-  host_groups = [
-    {
-      prefix: "worker",
-      mem: 1024,
-      cpu: 1,
-      nodes: 3
-    },
-    {
-      prefix: "lb",
-      mem: 512,
-      cpu: 1,
-      nodes: 2
-    }
-  ]
-
-  (0..(host_groups.length()-1)).each do |group|
-    (1..(host_groups[group][:nodes])).each do |i|
-      config.vm.define "#{host_groups[group][:prefix]}#{i}" do |box|
-        box.vm.network "private_network", ip: "#{subnet}#{i}"
-        box.vm.hostname = "#{host_groups[group][:prefix]}#{i}"
-        config.vm.provider "virtualbox" do |v|
-          v.name = "#{host_groups[group][:prefix]}#{i}"
-          v.memory = "#{host_groups[group][:mem]}"
-          v.cpus = "#{host_groups[group][:cpu]}"
+  (0..host_groups.length()-1).each do |group|
+    group = host_groups[group]
+    (1..group[:nodes]).each do |i|
+      vmname = "#{group[:prefix]}#{i}"
+      config.vm.define vmname do |node|
+        node.vm.network "private_network", ip: "#{subnet}#{i}"
+        node.vm.box = group[:os]
+        node.vm.hostname = vmname
+        node.vm.provider :virtualbox do |v|
+          v.customize ["modifyvm", :id, "--groups", "#{project}"]
+          v.gui = false
+          v.name = vmname
+          v.memory = group[:mem]
+          v.cpus = group[:cpu]
         end
+      
         ssh_pub_key = File.readlines("#{Dir.home}/.ssh/id_rsa.pub").first.strip
-        box.vm.provision :shell do |shell|
+        node.vm.provision :shell do |shell|
           shell.inline = <<-SHELL
             echo #{ssh_pub_key} >> /home/vagrant/.ssh/authorized_keys
           SHELL
