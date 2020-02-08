@@ -16,6 +16,6 @@ listen stats
 
 listen apache
     bind *:80
-    {% for host in groups.backend %}
+    {% for host in groups.backends %}
     server {{ hostvars[host].inventory_hostname }} {{ hostvars[host].ansible_host }}:80 check
     {% endfor %} 
