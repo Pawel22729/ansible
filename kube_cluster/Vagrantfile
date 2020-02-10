@@ -1,0 +1,76 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+project = '/kubernetes_project'
+host_groups = [
+  {
+    prefix: "slave",
+    ip_from: "192.168.33.2",
+    mem: 2048,
+    cpu: 1,
+    nodes: 1,
+    os: 'centos/7' #'bento/ubuntu-18.04'
+  },
+  {
+    prefix: "master",
+    ip_from: "192.168.33.1",
+    mem: 2028,
+    cpu: 1,
+    nodes: 1,
+    os: 'centos/7'
+  }
+]
+
+Vagrant.configure("2") do |config|
+
+  (0..host_groups.length()-1).each do |group|
+    group = host_groups[group]
+    (1..group[:nodes]).each do |i|
+      vmname = "#{group[:prefix]}#{i}"
+      config.vm.define vmname do |node|
+        node.vm.network "private_network", ip: "#{group[:ip_from]}#{i}"
+        node.vm.box = group[:os]
+        node.vm.hostname = vmname
+        node.vm.provider :virtualbox do |v|
+          v.customize ["modifyvm", :id, "--groups", "#{project}"]
+          v.gui = false
+          v.name = vmname
+          v.memory = group[:mem]
+          v.cpus = group[:cpu]
+        end
+      
+        ssh_pub_key = File.readlines("#{Dir.home}/.ssh/id_rsa.pub").first.strip
+        node.vm.provision :shell do |shell|
+          shell.inline = <<-SHELL
+            echo #{ssh_pub_key} >> /home/vagrant/.ssh/authorized_keys
+          SHELL
+        end
+      end
+    end
+  end
+  # config.vm.provision "ansible" do |ansible|
+  #   ansible.galaxy_role_file = "requirements.yml"
+  #   ansible.playbook = "playbook.yml"
+  #   ansible.inventory_path = "inventory.yml"
+  #   ansible.limit = "all"
+  #   ansible.groups = {
+  #     "slaves" => ["slave1", "slave2", "slave3"],
+  #     "masters" => ["master1"]
+  #   }
+  # end
+end
+
+# Vagrant.configure("2") do |config|
+#   config.vm.provision "ansible" do |ansible|
+#     ansible.galaxy_role_file = "requirements.yml"
+#     ansible.playbook = "playbook.yml"
+#     ansible.inventory_path = "inventory.yml"
+    #ansible.limit = "all"
+    # ansible.groups = {
+    #   "slaves" => ["slave1", "slave2", "slave3"],
+    #   "masters" => ["master1"],
+    #   "slaves:vars" => {"kubernetes_role" => "node"},
+    #   "masters:vars" => {"kubernetes_role" => "master"},
+    # }
+#   end
+# end

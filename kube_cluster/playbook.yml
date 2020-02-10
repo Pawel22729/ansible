@@ -1,0 +1,12 @@
+---
+- name: Kubernetes | Setup
+  hosts: all
+  become: true
+  serial: "100%"
+  vars:
+    kubernetes_allow_pods_on_master: true
+    swap_file_state: absent
+  roles:
+    - geerlingguy.swap
+    - geerlingguy.docker
+    - geerlingguy.kubernetes

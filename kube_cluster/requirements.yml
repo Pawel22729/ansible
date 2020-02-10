@@ -1,0 +1,11 @@
+- name: geerlingguy.kubernetes
+  src: https://github.com/geerlingguy/ansible-role-kubernetes.git
+  version: origin/master
+
+# - name: geerlingguy.docker
+#   src: https://github.com/geerlingguy/ansible-role-docker.git
+#   version: origin/master  
+
+- name: geerlingguy.swap 
+  src: https://github.com/geerlingguy/ansible-role-swap.git
+  version: origin/master 

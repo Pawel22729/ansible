@@ -1,0 +1,22 @@
+#slave2 ansible_host=192.168.33.22 ansible_user="vagrant"
+#slave3 ansible_host=192.168.33.23 ansible_user="vagrant"
+master1 ansible_host=192.168.33.11 ansible_user="vagrant"
+slave1 ansible_host=192.168.33.21 ansible_user="vagrant"
+
+[slaves]
+slave1 
+#slave2 
+#slave3 
+
+[masters]
+master1
+
+[slaves:vars]
+kubernetes_role="node"
+kubernetes_kubelet_extra_args=--node-ip={{ ansible_host }} --cgroup-driver=systemd
+#kubernetes_join_command_extra_opts=--cgroup-driver=systemd
+
+[masters:vars]
+kubernetes_role="master"
+kubernetes_kubeadm_init_extra_opts=--apiserver-advertise-address={{ ansible_host }} 
+#--cgroup-driver=systemd --ignore-preflight-errors=all
