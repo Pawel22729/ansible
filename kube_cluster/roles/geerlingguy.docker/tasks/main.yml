@@ -1,0 +1,47 @@
+---
+- include_tasks: setup-RedHat.yml
+  when: ansible_os_family == 'RedHat'
+
+- include_tasks: setup-Debian.yml
+  when: ansible_os_family == 'Debian'
+ 
+- name: Create /etc/docker folder
+  file:
+    path: /etc/docker
+    state: directory
+    mode: '0766'    
+
+- name: Set bridge-nf-call-iptables to 1
+  command: echo 'net.bridge.bridge-nf-call-iptables=1' | sudo tee -a /etc/sysctl.conf
+
+- name: Update docker config
+  template:
+    src: templates/docker.daemon.j2
+    dest: /etc/docker/daemon.json
+    mode: '0755'  
+
+- name: Install Docker-cli.
+  package:
+    name: "{{ docker_package_cli }}"
+    state: "{{ docker_package_state }}"
+
+- name: Install Docker.
+  package:
+    name: "{{ docker_package }}"
+    state: "{{ docker_package_state }}"
+  notify: restart docker  
+
+- name: Ensure Docker is started and enabled at boot.
+  service:
+    name: docker
+    state: "{{ docker_service_state }}"
+    enabled: "{{ docker_service_enabled }}"
+
+- name: Ensure handlers are notified now to avoid firewall conflicts.
+  meta: flush_handlers
+
+- include_tasks: docker-compose.yml
+  when: docker_install_compose | bool
+
+- include_tasks: docker-users.yml
+  when: docker_users | length > 0
