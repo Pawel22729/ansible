@@ -21,11 +21,3 @@
   tags:
     - jenkins
 
-- hosts:
-    - jenkins_servers
-  user: vagrant
-  become: true
-  roles:
-    - role: ansible-jenkins-config  
-  tags:
-    - jenkins
