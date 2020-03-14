@@ -1,0 +1,122 @@
+## -*- mode: ruby -*-
+## vi: set ft=ruby :
+
+require 'ipaddr'
+
+###############################
+# Start: Custom Configuration #
+###############################
+
+# lab_name is the name of the lab where all files will be organized.
+lab_name = "homecoming_lab"
+
+# Cluster definition
+clusters = [
+  {
+    :prefix       => "jenkins-server",
+    :domain       => "local.net",
+    :box          => "ubuntu/bionic64",
+    :nodes        => 1,
+    :cpu          => 2,
+    :mem          => 2094,
+    :publan       => IPAddr.new("192.168.99.0/24"),
+    :publan_start => 100
+  }
+]
+
+#############################
+# End: Custom Configuration #
+#############################
+
+######################################################
+# Extending Class IPAddr to add the CIDR to the lan
+class IPAddr
+  def to_cidr_s
+    if @addr
+      mask = @mask_addr.to_s(2).count('1')
+      "#{to_s}/#{mask}"
+    else
+      nil
+    end
+  end
+end # extend class IPAddr
+
+########
+# Main #
+########
+
+Vagrant.configure(2) do |config|
+  config.vm.graceful_halt_timeout = 360
+  config.vm.box_check_update = false
+  config.vm.synced_folder '.', '/vagrant', disabled: true
+
+  (0..(clusters.length-1)).each do |cluid|
+
+    # assign variable clu to current cluster, for convenience
+    clu = clusters[cluid]
+
+    # loop through each node in the cluster
+    (1..(clu[:nodes])).each do |nid|
+
+      # let's start from the last node
+      nid = clu[:nodes]+1-nid
+      config.vm.define vm_name = "#{clu[:prefix]}-%03d" % nid do |cnf|
+
+        # set the right box for the VM
+        cnf.vm.box = clu[:box]
+        if (clu[:box_version]) then
+          cnf.vm.box_version = clu[:box_version]
+        end #if
+
+        # the new VM name
+        vm_name = "#{clu[:prefix]}-%03d" % nid
+        fqdn = "#{vm_name}.#{clu[:domain]}"
+        cnf.vm.hostname = "#{fqdn}"
+
+        # incrementing public ip for the cluster
+        pubip = clu[:publan].|(clu[:publan_start]+nid-1).to_s
+
+        cnf.vm.provider :virtualbox do |vb|
+          # vb.linked_clone = true # in case you want thin provisioning
+          vb.name = vm_name
+          vb.gui = false
+          vb.customize ["modifyvm", :id, "--memory", clu[:mem]]
+          vb.customize ["modifyvm", :id, "--cpus", clu[:cpu]]
+          vb.customize ["modifyvm", :id, "--groups", "/#{lab_name}/#{clu[:prefix]}"]
+        end #config.vm.provider
+
+        # Configuring virtualbox network for #{pubip}
+        cnf.vm.network :private_network, ip: pubip
+    
+      end #config.vm.define
+    end #loop nodes
+  end #loop clusters
+  
+  ####################
+  # Start: Provision #
+  ####################
+  
+  # Add Public RSA keys
+  config.vm.provision "shell" do |s|
+    ssh_pub_key = File.readlines("#{Dir.home}/.ssh/id_rsa.pub").first.strip
+    s.inline = <<-SHELL
+    echo #{ssh_pub_key} >> /home/vagrant/.ssh/authorized_keys
+    SHELL
+  end
+
+  # Ansible Provisioner
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "provisioning/playbook.yml"
+    ansible.galaxy_role_file = "provisioning/requirements.yml"
+    ansible.galaxy_roles_path = "provisioning/roles"
+    ansible.compatibility_mode = "2.0"
+    ansible.groups = {
+        "jenkins_servers" => ["jenkins-server-001"]
+    }
+  end
+
+  ##################
+  # End: Provision #
+  ##################
+  
+end #Vagrant.configure

@@ -1,0 +1,17 @@
+---
+- name: Jenkins | add jenkins user to docker group
+  user:
+    name: jenkins
+    groups: docker
+    append: yes
+
+- name: Jenkins | install jenkins configuration file
+  template:
+    src: templates/jenkins.yaml.j2
+    dest: /var/lib/jenkins/jenkins.yaml
+    owner: jenkins
+    group: jenkins
+    mode: '0644'
+  notify: restart jenkins
+  environment:
+    CASC_JENKINS_CONFIG: /var/lib/jenkins/jenkins.yaml

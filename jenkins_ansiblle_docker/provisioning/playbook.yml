@@ -1,0 +1,31 @@
+---
+- hosts:
+    - jenkins_servers
+  user: vagrant
+  become: true
+  vars:
+    - package_hold_list:
+      - openjdk-8-jdk
+      - docker-ce
+      - jenkins
+  roles:
+    - role: ansible-java8
+      java_packages:
+          - openjdk-8-jdk
+
+    - ansible-swapoff
+    - ansible-docker
+    - ansible-jenkins
+    - ansible-hold-pkg
+
+  tags:
+    - jenkins
+
+- hosts:
+    - jenkins_servers
+  user: vagrant
+  become: true
+  roles:
+    - role: ansible-jenkins-config  
+  tags:
+    - jenkins

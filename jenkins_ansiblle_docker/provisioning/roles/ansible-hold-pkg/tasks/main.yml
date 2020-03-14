@@ -1,0 +1,7 @@
+---
+- name: Setting the package list to be hold.
+  dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  with_items: "{{ package_hold_list }}"
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'

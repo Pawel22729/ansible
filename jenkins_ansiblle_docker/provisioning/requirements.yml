@@ -1,0 +1,16 @@
+---
+- src: git+https://github.com/geerlingguy/ansible-role-swap
+  name: ansible-swapoff
+  version: master
+
+- src: git+https://github.com/geerlingguy/ansible-role-jenkins
+  name: ansible-jenkins
+  version: master
+
+- src: git+https://github.com/geerlingguy/ansible-role-java
+  name: ansible-java8
+  version: master
+
+- src: git+https://github.com/geerlingguy/ansible-role-docker
+  name: ansible-docker
+  version: master

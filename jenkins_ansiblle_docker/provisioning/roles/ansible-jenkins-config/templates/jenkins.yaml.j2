@@ -1,0 +1,74 @@
+jenkins:
+  systemMessage: "GIG Jenkins - as-a-code config"
+  numExecutors: 5
+  scmCheckoutRetryCount: 2
+  mode: NORMAL
+
+  globalNodeProperties:
+    - envVars:
+        env:
+          - key: FOO
+            value: BAR
+
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+
+tool:
+  git:
+    installations:
+      - name: git
+        home: /usr/bin/git
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - basicSSHUserPrivateKey:
+              scope: GLOBAL
+              id: "jenkins-gig"
+              username: "jenkins"
+              passphrase: ""
+              description: "SSH Credentials for jenkins"
+              privateKeySource:
+                directEntry:
+                  privateKey: |
+                    {{ SSH_PRIVATE_KEY | indent(20) }}
+          - usernamePassword:
+              scope: GLOBAL
+              id: {{ pinfracreg.id }}
+              username: {{ pinfracreg.username }}
+              password: {{ pinfracreg.password  }}
+              description: "Username/Password for docker registry"
+          - usernamePassword:
+              scope: GLOBAL
+              id: {{ npm.id }}
+              username: {{ npm.username }}
+              password: {{ npm.password  }}
+              description: "Username/Password for npm registry"
+
+jobs:
+  - script: >
+      job('seed-job') {
+        parameters {
+          stringParam('PROJECT', '', 'project name')
+          stringParam('SCM', '', 'project repo')
+          stringParam('RELEASE_SCRIPT_PATH', '', 'project release jenkinsfile')
+          stringParam('CI_BRANCHES_INCLUDED', '', 'project branches')
+          stringParam('CI_SCRIPT_PATH', '', 'project ci jenkinsfile')
+        }
+        scm {
+            git {
+              remote {
+                url('git@bitbucket.org:gaminginnovationgroup/gig.devops.magic.jenkins-jobs.git')
+                credentials('jenkins-gig')
+              }
+            }
+        }
+        steps {
+          dsl {
+            external('jobs/**/*.groovy')
+            removeAction('DISABLE')
+          }
+        }    
+      }
