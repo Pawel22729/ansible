@@ -1,7 +1,0 @@
----
-marathon_app_id: "{{ project }}/{{ item.service.name }}"
-
-# Default secret name
-magic_pull_secret: magic-image-pull-secret
-docker_registry_json: eyJhdXRocyI6eyJwaW5mcmFjcmVnLmF6dXJlY3IuaW8iOnsidXNlcm5hbWUiOiJwaW5mcmFjcmVnIiwicGFzc3dvcmQiOiIvPT0vTG0vPW0rUmh2YmtxUEdhZD1FZ2cvUjIvalBYciIsImF1dGgiOiJjR2x1Wm5KaFkzSmxaem92UFQwdlRHMHZQVzByVW1oMlltdHhVRWRoWkQxRloyY3ZVakl2YWxCWWNnPT0iLCJlbWFpbCI6ImRldm9wc0BtYXZyaXguZXMifX19
-container_registry_host: pinfracreg.azurecr.io
