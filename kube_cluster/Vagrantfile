@@ -2,22 +2,23 @@
 # vi: set ft=ruby :
 
 project = '/kubernetes_project'
+image = 'centos/7'
 host_groups = [
   {
     prefix: "slave",
     ip_from: "192.168.33.2",
     mem: 2048,
-    cpu: 1,
+    cpu: 2,
     nodes: 1,
-    os: 'centos/7' #'bento/ubuntu-18.04'
+    os: image
   },
   {
     prefix: "master",
     ip_from: "192.168.33.1",
-    mem: 2028,
-    cpu: 1,
+    mem: 2048,
+    cpu: 2,
     nodes: 1,
-    os: 'centos/7'
+    os: image
   }
 ]
 
@@ -48,29 +49,10 @@ Vagrant.configure("2") do |config|
       end
     end
   end
-  # config.vm.provision "ansible" do |ansible|
-  #   ansible.galaxy_role_file = "requirements.yml"
-  #   ansible.playbook = "playbook.yml"
-  #   ansible.inventory_path = "inventory.yml"
-  #   ansible.limit = "all"
-  #   ansible.groups = {
-  #     "slaves" => ["slave1", "slave2", "slave3"],
-  #     "masters" => ["master1"]
-  #   }
-  # end
+#  config.vm.provision "ansible" do |ansible|
+#    ansible.galaxy_role_file = "requirements.yml"
+#    ansible.playbook = "playbook.yml"
+#    ansible.inventory_path = "inventory.yml"
+#    ansible.limit = "all"
+#  end
 end
-
-# Vagrant.configure("2") do |config|
-#   config.vm.provision "ansible" do |ansible|
-#     ansible.galaxy_role_file = "requirements.yml"
-#     ansible.playbook = "playbook.yml"
-#     ansible.inventory_path = "inventory.yml"
-    #ansible.limit = "all"
-    # ansible.groups = {
-    #   "slaves" => ["slave1", "slave2", "slave3"],
-    #   "masters" => ["master1"],
-    #   "slaves:vars" => {"kubernetes_role" => "node"},
-    #   "masters:vars" => {"kubernetes_role" => "master"},
-    # }
-#   end
-# end
