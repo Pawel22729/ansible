@@ -4,8 +4,29 @@
   become: true
   serial: "100%"
   vars:
-    kubernetes_allow_pods_on_master: true
+    kubernetes_allow_pods_on_master: false
     swap_file_state: absent
+    kubernetes_flannel_manifest_file: "/tmp/flannel.yml"
+
+  pre_tasks:
+    - name: Enable modprobe
+      modprobe:
+        name: br_netfilter
+        state: present
+
+    - name: Enable bridge-nf-call-iptables  
+      sysctl:
+        name: net.bridge.bridge-nf-call-iptables
+        value: '1'
+        sysctl_set: yes
+        state: present
+        reload: yes
+     
+    - name: copy flannel YAML
+      copy:
+        src: flannel.yml
+        dest: /tmp/flannel.yml    
+
   roles:
     - geerlingguy.swap
     - geerlingguy.docker
