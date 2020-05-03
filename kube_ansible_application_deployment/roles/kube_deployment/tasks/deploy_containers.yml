@@ -1,0 +1,8 @@
+---
+# - name: kube_deployment | deploy containters
+#   k8s:
+#     definition: "{{ lookup('template', 'templates/deployment.yml.j2') }}"    
+#     state: present
+
+- debug:
+    msg: "{{ lookup('template', 'templates/deployment.yml.j2') }}"

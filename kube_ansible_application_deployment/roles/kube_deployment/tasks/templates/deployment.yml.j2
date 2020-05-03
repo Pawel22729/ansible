@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ item.name }}"
+  labels:
+  {% for label in item.labels %}
+    - {{ label }}
+  {% endfor %}
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+    {% for label in item.labels %}
+      {{ label }}
+    {% endfor %}
+  template:
+    metadata:
+      labels:
+      {% for label in item.labels %}
+        {{ label }}
+      {% endfor %}
+    spec:
+      containers:
+      - name: "{{ item.name }}"
+        image: "{{ item.image }}"
+        ports:
+        - containerPort: "{{ item.containerPort }}"

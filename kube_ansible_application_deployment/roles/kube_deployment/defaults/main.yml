@@ -1,0 +1,17 @@
+default_namespace: testing-namespace
+
+containers:
+    - name: tutum
+      image: tutum/hello-world
+      labels:
+        - "app: tutum-app"
+      replicas: 1
+      containerPort: 80  
+    - name: nginx
+      image: nginx  
+      labels:
+        - app: nginx-app
+      replicas: 1
+      containerPort: 80
+      
+    

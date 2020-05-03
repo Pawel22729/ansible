@@ -1,0 +1,7 @@
+---
+- name: kube-deployment | ensure NS exist
+  k8s:
+    name: "{{ default_namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
